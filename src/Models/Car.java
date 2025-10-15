@@ -6,6 +6,7 @@ public class Car {
     private int horsePower;
     private double aerodynamicCoefficient;
     private Driver accountableDriver;
+    private double performance;
 
 
     public Car(String model, int horsePower, double aerodynamicCoefficient) {
@@ -13,6 +14,7 @@ public class Car {
         this.horsePower = horsePower;
         this.aerodynamicCoefficient = aerodynamicCoefficient;
         this.accountableDriver = getAccountableDriver();
+        this.performance = calculateInitialPerformance();
     }
 
     public String getModel() {
@@ -47,6 +49,14 @@ public class Car {
         this.accountableDriver = accountableDriver;
     }
 
+    public double getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(double performance) {
+        this.performance = performance;
+    }
+
 
     public void showInfo() {
         System.out.println("--------------------------");
@@ -59,6 +69,10 @@ public class Car {
             System.out.println("Piloto Responsável: Nenhum");
         }
         System.out.println("--------------------------");
+    }
+
+    public double calculateInitialPerformance() {
+        return this.horsePower * this.aerodynamicCoefficient;
     }
 
     public double calculateEfficiency(int driverHandicap) {

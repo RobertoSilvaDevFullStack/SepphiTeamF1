@@ -19,6 +19,14 @@ public class Team {
         this.members.add(boss);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getCitizenship() {
+        return citizenship;
+    }
+
     public void addMember(TeamMember member) {
         this.members.add(member);
     }

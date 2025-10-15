@@ -21,11 +21,11 @@ public class Driver extends TeamMember{
     }
 
     public void setHandicap(int handicap) {
-        if(handicap < 100) {
+        if(handicap < 0) {
             System.out.println("O handicap não pode ser menor que 0");
             return;
         }
-        this.handicap += handicap;
+        this.handicap = handicap;
     }
 
     public int getPointsOfSeason() {
@@ -39,7 +39,7 @@ public class Driver extends TeamMember{
     public Driver(String name, int age, double wage, int carNumber, int handicap, int pointsOfSeason) {
         super(name, age, wage);
         this.carNumber = carNumber;
-        this.handicap = 0;
+        Practice();
         this.pointsOfSeason = 0;
     }
 
@@ -76,7 +76,6 @@ public class Driver extends TeamMember{
                 setPointsOfSeason(1);
                 break;
             default:
-                setPointsOfSeason(0);
                 setHandicap(1);
                 break;
         }
@@ -84,7 +83,8 @@ public class Driver extends TeamMember{
 
     public void Practice(){
         Random rand = new Random();
-        setHandicap(rand.nextInt(6));
+        // Aumentado de 0-5 para 0-20 para maior variação
+        setHandicap(rand.nextInt(21));
     }
 
 

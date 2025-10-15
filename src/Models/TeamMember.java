@@ -18,6 +18,12 @@ public class TeamMember {
         System.out.println("Salário: " + getWage());
     }
 
+    public void exibirInfo() {
+        System.out.println("Nome: " + getName());
+        System.out.println("Idade: " + getAge());
+        System.out.println("Salário: " + getWage());
+    }
+
     public String getName() {
         return name;
     }
