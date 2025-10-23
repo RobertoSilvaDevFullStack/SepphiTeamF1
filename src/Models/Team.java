@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Team {
 
+    private int id;
     private String name;
     private String citizenship;
     public ArrayList<Car> cars;
@@ -11,12 +12,21 @@ public class Team {
     private TeamBoss boss;
 
     public Team(String name, String citizenship) {
+        this.id = -1; // -1 indica que não foi salvo no banco ainda
         this.name = name;
         this.citizenship = citizenship;
         this.boss = boss;
         this.cars = new ArrayList<Car>();
         this.members = new ArrayList<TeamMember>();
         this.members.add(boss);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
