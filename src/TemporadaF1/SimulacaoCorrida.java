@@ -1,6 +1,7 @@
 package TemporadaF1;
 
 import Models.*;
+import Data.DatabaseManager;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -13,8 +14,13 @@ public class SimulacaoCorrida {
     private ArrayList<Team> teams;
     private ArrayList<Race> races;
     private Scanner scanner;
+    private DatabaseManager dbManager;
 
     public SimulacaoCorrida() {
+        this(null);
+    }
+
+    public SimulacaoCorrida(DatabaseManager dbManager) {
         // Configurar UTF-8 para o console
         try {
             System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
@@ -26,8 +32,68 @@ public class SimulacaoCorrida {
         this.teams = new ArrayList<>();
         this.races = new ArrayList<>();
         this.scanner = new Scanner(System.in);
-        inicializarEquipes();
-        criarCalendarioCompleto(); // Criar todas as corridas automaticamente
+        this.dbManager = dbManager;
+
+        // Se tiver acesso ao banco, carregar dados de lá
+        if (dbManager != null && dbManager.testConnection()) {
+            carregarDadosDosBanco();
+        } else {
+            // Fallback: carregar dados hardcoded (apenas para testes offline)
+            inicializarEquipes();
+        }
+    }
+
+    private void carregarDadosDosBanco() {
+        System.out.println("📥 Carregando dados do banco de dados...\n");
+
+        // Carregar todas as equipes do banco
+        var teamsFromDb = dbManager.getTeamDAO().getAllTeams();
+        teams = new ArrayList<>(teamsFromDb);
+
+        if (teams.isEmpty()) {
+            System.out.println("⚠️  Nenhuma equipe encontrada no banco!");
+            System.out.println("    Carregando dados padrão...\n");
+            inicializarEquipes();
+            return;
+        }
+
+        // Carregar pilotos e carros para cada equipe
+        for (Team team : teams) {
+            // Carregar pilotos
+            var drivers = dbManager.getDriverDAO().getDriversByTeam(team.getId());
+            for (Driver driver : drivers) {
+                team.addMember(driver);
+            }
+
+            // Carregar carros
+            var cars = dbManager.getCarDAO().getCarsByTeam(team.getId());
+            for (Car car : cars) {
+                team.addCar(car);
+            }
+
+            // Carregar engenheiros
+            var engineers = dbManager.getEngineerDAO().getEngineersByTeam(team.getId());
+            for (Engineer engineer : engineers) {
+                team.addMember(engineer);
+            }
+        }
+
+        System.out.println("✓ " + teams.size() + " equipes carregadas do banco!");
+
+        // Carregar todas as corridas do banco
+        var racesFromDb = dbManager.getRaceDAO().getRacesByYear(2025);
+        for (Race race : racesFromDb) {
+            // Adicionar todos os carros na corrida
+            for (Team team : teams) {
+                for (Car car : team.cars) {
+                    race.addCar(car);
+                }
+            }
+
+            races.add(race);
+        }
+
+        System.out.println("✓ " + races.size() + " corridas carregadas do banco!\n");
     }
 
     private void criarCalendarioCompleto() {

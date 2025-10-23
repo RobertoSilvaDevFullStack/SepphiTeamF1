@@ -2,11 +2,15 @@ package Models;
 
 public class TeamMember {
 
+    protected int id;
+    protected int teamId;
     private String name;
     private int age;
     private double wage;
 
     public TeamMember(String name, int age, double wage) {
+        this.id = -1; // -1 indica que não foi salvo no banco ainda
+        this.teamId = -1;
         this.name = name;
         this.age = age;
         this.wage = wage;
@@ -56,5 +60,22 @@ public class TeamMember {
 
     public void setWage(double wage) {
         this.wage = wage;
+    }
+
+    // Getters e Setters para ID e TeamId
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 }

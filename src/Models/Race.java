@@ -5,27 +5,64 @@ import java.util.Random;
 
 public class Race {
 
+    private int id;
     private String circuitName;
     private String country;
     private String flag;
+    private String emoji;
+    private int roundNumber;
     private ArrayList<Car> cars;
     public int[] classification;
     private Random random;
 
     public Race(String circuitName, String country) {
+        this.id = -1;
+        this.roundNumber = -1;
         this.circuitName = circuitName;
         this.country = country;
         this.flag = "";
+        this.emoji = "";
         this.cars = new ArrayList<>();
         this.random = new Random();
     }
 
     public Race(String circuitName, String country, String flag) {
+        this.id = -1;
+        this.roundNumber = -1;
         this.circuitName = circuitName;
         this.country = country;
         this.flag = flag;
+        this.emoji = flag;
         this.cars = new ArrayList<>();
         this.random = new Random();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+
+    public void setRoundNumber(int roundNumber) {
+        this.roundNumber = roundNumber;
+    }
+
+    public String getName() {
+        return circuitName;
+    }
+
+    public String getEmoji() {
+        return emoji;
+    }
+
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
     }
 
     public String getCircuitName() {
