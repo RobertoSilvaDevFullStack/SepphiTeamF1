@@ -3,9 +3,6 @@ package TemporadaF1;
 import Models.*;
 import Data.DatabaseManager;
 
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,13 +18,6 @@ public class SimulacaoCorrida {
     }
 
     public SimulacaoCorrida(DatabaseManager dbManager) {
-        // Configurar UTF-8 para o console
-        try {
-            System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            // Fallback se não conseguir configurar UTF-8
-            System.out.println("Aviso: Não foi possível configurar UTF-8 no console");
-        }
 
         this.teams = new ArrayList<>();
         this.races = new ArrayList<>();
@@ -44,7 +34,7 @@ public class SimulacaoCorrida {
     }
 
     private void carregarDadosDosBanco() {
-        System.out.println("📥 Carregando dados do banco de dados...\n");
+        System.out.println("[*] Carregando dados do banco de dados...\n");
 
         // Carregar todas as equipes do banco
         var teamsFromDb = dbManager.getTeamDAO().getAllTeams();
@@ -57,18 +47,28 @@ public class SimulacaoCorrida {
             return;
         }
 
-        // Carregar pilotos e carros para cada equipe
+        // Carregar pilotos, carros e engenheiros para cada equipe
         for (Team team : teams) {
             // Carregar pilotos
             var drivers = dbManager.getDriverDAO().getDriversByTeam(team.getId());
+            ArrayList<Driver> mainDrivers = new ArrayList<>();
             for (Driver driver : drivers) {
                 team.addMember(driver);
+                if (!driver.isReserve()) {
+                    mainDrivers.add(driver);
+                }
             }
 
-            // Carregar carros
+            // Carregar carros e associar pilotos
             var cars = dbManager.getCarDAO().getCarsByTeam(team.getId());
+            int driverIndex = 0;
             for (Car car : cars) {
                 team.addCar(car);
+                // Associar pilotos principais aos carros (1 piloto por carro)
+                if (driverIndex < mainDrivers.size()) {
+                    car.setAccountableDriver(mainDrivers.get(driverIndex));
+                    driverIndex++;
+                }
             }
 
             // Carregar engenheiros
@@ -78,7 +78,7 @@ public class SimulacaoCorrida {
             }
         }
 
-        System.out.println("✓ " + teams.size() + " equipes carregadas do banco!");
+        System.out.println("[+] " + teams.size() + " equipes carregadas do banco!");
 
         // Carregar todas as corridas do banco
         var racesFromDb = dbManager.getRaceDAO().getRacesByYear(2025);
@@ -93,7 +93,7 @@ public class SimulacaoCorrida {
             races.add(race);
         }
 
-        System.out.println("✓ " + races.size() + " corridas carregadas do banco!\n");
+        System.out.println("[+] " + races.size() + " corridas carregadas do banco!\n");
     }
 
     private void criarCalendarioCompleto() {
@@ -135,7 +135,7 @@ public class SimulacaoCorrida {
             races.add(race);
         }
 
-        System.out.println("✓ " + races.size() + " corridas do calendario criadas!");
+        System.out.println("[+] " + races.size() + " corridas do calendario criadas!");
     }
 
     private void inicializarEquipes() {
@@ -235,8 +235,8 @@ public class SimulacaoCorrida {
         adicionarEngenheiros(sepphi, "Sepphi");
         teams.add(sepphi);
 
-        System.out.println("✓ " + teams.size() + " equipes inicializadas com sucesso!");
-        System.out.println("✓ Pilotos reservas cadastrados para todas as equipes!");
+        System.out.println("[+] " + teams.size() + " equipes inicializadas com sucesso!");
+        System.out.println("[+] Pilotos reservas cadastrados para todas as equipes!");
     }
 
     private Team criarEquipe(String nome, String pais, String nomeBoss, int idadeBoss, double salarioBoss) {
@@ -306,18 +306,18 @@ public class SimulacaoCorrida {
         }
 
         races.add(race);
-        System.out.println("✓ Corrida criada: " + nomeCorrida + " (" + pais + ")");
+        System.out.println("[+] Corrida criada: " + nomeCorrida + " (" + pais + ")");
     }
 
     public void simularCorrida(int indiceCorrida) {
         if (indiceCorrida < 0 || indiceCorrida >= races.size()) {
-            System.out.println("❌ Corrida não encontrada!");
+            System.out.println("[ERRO] Corrida não encontrada!");
             return;
         }
 
         Race race = races.get(indiceCorrida);
         System.out.println("\n" + "=".repeat(50));
-        System.out.println("🏁 >>> INICIANDO CORRIDA <<< 🏁");
+        System.out.println("[!] >>> INICIANDO CORRIDA <<<");
         System.out.println("=".repeat(50));
 
         // Chance de substituição antes da corrida
@@ -328,7 +328,7 @@ public class SimulacaoCorrida {
         race.showResults();
         race.updatePointsOnSeason();
 
-        System.out.println("\n✅ Corrida finalizada!");
+        System.out.println("\n[OK] Corrida finalizada!");
     }
 
     public void mostrarClassificacaoEquipes() {
@@ -373,19 +373,19 @@ public class SimulacaoCorrida {
 
         while (rodando) {
             System.out.println("\n" + "=".repeat(50));
-            System.out.println("🏎️  >>> SIMULACAO TEMPORADA F1 2025 <<< 🏎️");
+            System.out.println("[F1] >>> SIMULACAO TEMPORADA F1 2025 <<<");
             System.out.println("=".repeat(50));
-            System.out.println("🔧 1 - Melhorar carros (engenheiros trabalhando)");
-            System.out.println("➕ 2 - Criar nova corrida");
-            System.out.println("🏁 3 - Simular corrida");
-            System.out.println("🏆 4 - Ver classificacao de equipes");
-            System.out.println("👤 5 - Ver classificacao de pilotos");
-            System.out.println("📊 6 - Ver detalhes de uma equipe");
-            System.out.println("🗓️  7 - Simular temporada completa (24 corridas)");
-            System.out.println("🔄 8 - Substituir piloto manualmente");
-            System.out.println("🗑️  9 - Limpar lista de corridas");
-            System.out.println("❌ 0 - Sair");
-            System.out.print("\n✨ Escolha uma opcao: ");
+            System.out.println("[*] 1 - Melhorar carros (engenheiros trabalhando)");
+            System.out.println("[+] 2 - Criar nova corrida");
+            System.out.println("[!] 3 - Simular corrida");
+            System.out.println("[T] 4 - Ver classificacao de equipes");
+            System.out.println("[P] 5 - Ver classificacao de pilotos");
+            System.out.println("[=] 6 - Ver detalhes de uma equipe");
+            System.out.println("[C] 7 - Simular temporada completa (24 corridas)");
+            System.out.println("[S] 8 - Substituir piloto manualmente");
+            System.out.println("[X] 9 - Limpar lista de corridas");
+            System.out.println("[0] 0 - Sair");
+            System.out.print("\n>>> Escolha uma opcao: ");
 
             String opcao = scanner.nextLine().trim();
 
@@ -394,21 +394,21 @@ public class SimulacaoCorrida {
                     melhorarCarros();
                     break;
                 case "2":
-                    System.out.print("📝 Nome da corrida: ");
+                    System.out.print("[*] Nome da corrida: ");
                     String nome = scanner.nextLine().trim();
-                    System.out.print("🌍 País: ");
+                    System.out.print("[*] País: ");
                     String pais = scanner.nextLine().trim();
                     criarCorrida(nome, pais);
                     break;
                 case "3":
                     if (races.isEmpty()) {
-                        System.out.println("❌ Nenhuma corrida criada ainda!");
+                        System.out.println("[!] Nenhuma corrida criada ainda!");
                     } else {
-                        System.out.println("\n🏁 Corridas disponíveis:");
+                        System.out.println("\n[!] Corridas disponíveis:");
                         for (int i = 0; i < races.size(); i++) {
                             System.out.println("   " + i + " - " + races.get(i).getCircuitNameWithFlag());
                         }
-                        System.out.print("🎯 Escolha o número da corrida: ");
+                        System.out.print("[?] Escolha o número da corrida: ");
                         try {
                             int idx = Integer.parseInt(scanner.nextLine().trim());
                             if (idx < 0 || idx >= races.size()) {
@@ -419,7 +419,7 @@ public class SimulacaoCorrida {
                         } catch (NumberFormatException e) {
                             System.out.println("❌ Erro: Digite apenas numeros!");
                         } catch (Exception e) {
-                            System.out.println("❌ Erro inesperado ao simular corrida: " + e.getMessage());
+                            System.out.println("[ERRO] Erro inesperado ao simular corrida: " + e.getMessage());
                             e.printStackTrace();
                         }
                     }
@@ -431,22 +431,22 @@ public class SimulacaoCorrida {
                     mostrarClassificacaoPilotos();
                     break;
                 case "6":
-                    System.out.println("\n📋 Equipes disponíveis:");
+                    System.out.println("\n[T] Equipes disponíveis:");
                     for (int i = 0; i < teams.size(); i++) {
                         System.out.println("   " + i + " - " + teams.get(i).getName());
                     }
-                    System.out.print("🎯 Escolha o número da equipe: ");
+                    System.out.print("[?] Escolha o número da equipe: ");
                     try {
                         int idx = Integer.parseInt(scanner.nextLine().trim());
                         if (idx < 0 || idx >= teams.size()) {
-                            System.out.println("❌ Equipe invalida! Escolha um numero entre 0 e " + (teams.size() - 1));
+                            System.out.println("[ERRO] Equipe invalida! Escolha um numero entre 0 e " + (teams.size() - 1));
                         } else {
                             teams.get(idx).showTeam();
                         }
                     } catch (NumberFormatException e) {
-                        System.out.println("❌ Erro: Digite apenas numeros!");
+                        System.out.println("[ERRO] Erro: Digite apenas numeros!");
                     } catch (Exception e) {
-                        System.out.println("❌ Erro inesperado: " + e.getMessage());
+                        System.out.println("[ERRO] Erro inesperado: " + e.getMessage());
                         e.printStackTrace();
                     }
                     break;
@@ -459,14 +459,14 @@ public class SimulacaoCorrida {
                 case "9":
                     races.clear();
                     criarCalendarioCompleto();
-                    System.out.println("✅ Lista de corridas limpa e recriada com sucesso!");
+                    System.out.println("[OK] Lista de corridas limpa e recriada com sucesso!");
                     break;
                 case "0":
                     rodando = false;
-                    System.out.println("\n👋 Encerrando simulacao. Ate logo!");
+                    System.out.println("\n[*] Encerrando simulacao. Ate logo!");
                     break;
                 default:
-                    System.out.println("❌ Opcao invalida!");
+                    System.out.println("[ERRO] Opcao invalida!");
             }
         }
     }
@@ -624,17 +624,5 @@ public class SimulacaoCorrida {
                 substituirPiloto(team, pilotoIndex, motivo);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        // Tentar configurar o console para UTF-8
-        try {
-            System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            // Ignorar se falhar
-        }
-
-        SimulacaoCorrida simulacao = new SimulacaoCorrida();
-        simulacao.menuPrincipal();
     }
 }

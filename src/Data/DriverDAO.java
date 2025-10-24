@@ -53,7 +53,8 @@ public class DriverDAO {
                         rs.getDouble("wage"),
                         rs.getInt("car_number"),
                         rs.getInt("handicap"),
-                        rs.getInt("points_of_season")
+                        rs.getInt("points_of_season"),
+                        rs.getBoolean("is_reserve")
                     );
                     driver.setId(id);
                     driver.setTeamId(rs.getInt("team_id"));
@@ -68,7 +69,7 @@ public class DriverDAO {
 
     public List<Driver> getDriversByTeam(int teamId) {
         List<Driver> drivers = new ArrayList<>();
-        String sql = "SELECT * FROM drivers WHERE team_id = ? AND is_reserve = FALSE ORDER BY car_number";
+        String sql = "SELECT * FROM drivers WHERE team_id = ? ORDER BY car_number";
         try (Connection conn = db.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, teamId);
@@ -81,7 +82,8 @@ public class DriverDAO {
                         rs.getDouble("wage"),
                         rs.getInt("car_number"),
                         rs.getInt("handicap"),
-                        rs.getInt("points_of_season")
+                        rs.getInt("points_of_season"),
+                        rs.getBoolean("is_reserve")
                     );
                     driver.setId(rs.getInt("id"));
                     driver.setTeamId(teamId);
@@ -109,7 +111,8 @@ public class DriverDAO {
                         rs.getDouble("wage"),
                         rs.getInt("car_number"),
                         rs.getInt("handicap"),
-                        rs.getInt("points_of_season")
+                        rs.getInt("points_of_season"),
+                        rs.getBoolean("is_reserve")
                     );
                     driver.setId(rs.getInt("id"));
                     driver.setTeamId(teamId);
@@ -124,7 +127,7 @@ public class DriverDAO {
 
     public List<Driver> getAllDrivers() {
         List<Driver> drivers = new ArrayList<>();
-        String sql = "SELECT * FROM drivers WHERE is_reserve = FALSE ORDER BY name";
+        String sql = "SELECT * FROM drivers ORDER BY name";
         try (Connection conn = db.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -136,7 +139,8 @@ public class DriverDAO {
                     rs.getDouble("wage"),
                     rs.getInt("car_number"),
                     rs.getInt("handicap"),
-                    rs.getInt("points_of_season")
+                    rs.getInt("points_of_season"),
+                    rs.getBoolean("is_reserve")
                 );
                 driver.setId(rs.getInt("id"));
                 driver.setTeamId(rs.getInt("team_id"));
