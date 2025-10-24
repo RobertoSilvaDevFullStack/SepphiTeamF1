@@ -7,6 +7,7 @@ public class Driver extends TeamMember{
     public int carNumber;
     private int handicap;
     private int pointsOfSeason;
+    private boolean isReserve;
 
     public int getCarNumber() {
         return carNumber;
@@ -39,8 +40,25 @@ public class Driver extends TeamMember{
     public Driver(String name, int age, double wage, int carNumber, int handicap, int pointsOfSeason) {
         super(name, age, wage);
         this.carNumber = carNumber;
+        this.isReserve = false; // Por padrão, não é reserva
         Practice();
         this.pointsOfSeason = 0;
+    }
+
+    public Driver(String name, int age, double wage, int carNumber, int handicap, int pointsOfSeason, boolean isReserve) {
+        super(name, age, wage);
+        this.carNumber = carNumber;
+        this.isReserve = isReserve;
+        Practice();
+        this.pointsOfSeason = 0;
+    }
+
+    public boolean isReserve() {
+        return isReserve;
+    }
+
+    public void setReserve(boolean reserve) {
+        isReserve = reserve;
     }
 
     public void saveResult(int finishPosition){

@@ -3,7 +3,10 @@ package Main;
 import Data.DatabaseManager;
 import Data.DatabaseInitializer;
 import TemporadaF1.SimulacaoCorrida;
+import Utils.EmojiHelper;
 import java.util.Scanner;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Classe Main atualizada para usar o novo sistema de persistência de dados
@@ -12,8 +15,19 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        // CONFIGURAR UTF-8 ANTES DE QUALQUER OUTPUT
+        try {
+            System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
+            System.setErr(new PrintStream(System.err, true, StandardCharsets.UTF_8));
+            // Tentar usar emojis, mas com fallback para ASCII se falhar
+            EmojiHelper.setUseEmojis(true);
+        } catch (Exception e) {
+            System.out.println("Aviso: Não foi possível configurar UTF-8, usando modo ASCII");
+            EmojiHelper.setUseEmojis(false);
+        }
+
         System.out.println("╔════════════════════════════════════════════════════════════╗");
-        System.out.println("║       🏁 SEPPHI TEAM F1 - SIMULADOR DE TEMPORADA 2025 🏁     ║");
+        System.out.println("║       " + EmojiHelper.getRacingFlag() + " SEPPHI TEAM F1 - SIMULADOR DE TEMPORADA 2025 " + EmojiHelper.getRacingFlag() + "     ║");
         System.out.println("║                    Versão 2.0 (Com Banco de Dados)          ║");
         System.out.println("╚════════════════════════════════════════════════════════════╝\n");
 

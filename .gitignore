@@ -1,16 +1,7 @@
 # Compiled class files
 *.class
 
-# Log files
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files
+# Package files
 *.jar
 *.war
 *.nar
@@ -19,9 +10,21 @@
 *.tar.gz
 *.rar
 
-# Virtual machine crash logs
-hs_err_pid*
-replay_pid*
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.flattened-pom.xml
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+.gradletasknamecache
 
 # IntelliJ IDEA
 .idea/
@@ -29,30 +32,97 @@ replay_pid*
 *.iws
 *.ipr
 out/
-.idea_modules/
+*.swp
+*.swo
+*~
 
 # Eclipse
 .classpath
 .project
 .settings/
 bin/
+.DS_Store
 
 # NetBeans
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
+nbproject/
 .nb-gradle/
+.nbjava.dat
 
 # VS Code
 .vscode/
+*.code-workspace
+
+# Visual Studio
+.vs/
 
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
 
 # Windows
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Node (se usar npm em algum ponto)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+~*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# IDE temporary files
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+
+# Compiled outputs
+bin/
+build/
+dist/
+target/
+
+# Cache
+.cache/
+*.cache
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
 
